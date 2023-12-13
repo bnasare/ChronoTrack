@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth'
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import app from "../firebase/config";
 
 //Auth instance
 const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,6 +43,25 @@ const Login = () => {
     }
   }
 
+  async function loginWithGoogle() {
+    try {
+      await signInWithPopup(auth, provider);
+      alert("Login successful!");
+      navigate("/reports");
+    }
+    catch (error) {
+      setError(error.message);
+    }
+  }
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/reports");
+      }
+    })
+    return () => unsubscribe();
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -94,20 +115,21 @@ const Login = () => {
             </div>
 
             <div>
-              {/* Error here */}
+              {error && <p className="text-red-500">{error}</p>}
               <button
+                disabled={loginLoading || registerLoading}
                 type="button"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 onClick={signUp}
               >
-                Register
+                {registerLoading ? "Registering..." : "Register"}
               </button>
               <button
                 type="button"
                 className="w-full flex mt-3 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 onClick={login}
               >
-                Login
+                {loginLoading ? "Logging in..." : "Login"}
               </button>
             </div>
           </form>
@@ -127,6 +149,8 @@ const Login = () => {
             <div className="mt-6 grid grid-cols-1 gap-3">
               <div>
                 <button
+                  onClick={loginWithGoogle}
+                  disabled={loginLoading || registerLoading}
                   type="button"
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >

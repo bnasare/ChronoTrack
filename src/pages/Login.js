@@ -28,6 +28,9 @@ const Login = () => {
     catch (error) {
       setError(error.message);
     }
+    finally {
+      setRegisterLoading(false);
+    }
   }
 
   async function login() {
@@ -40,6 +43,9 @@ const Login = () => {
     }
     catch (error) {
       setError(error.message);
+    }
+    finally {
+      setLoginLoading(false);
     }
   }
 

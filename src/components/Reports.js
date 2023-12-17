@@ -110,8 +110,7 @@ function Report() {
                         tasks.map((task) => (
                             <Task
                                 key={task.id}
-                                task={task.task}
-                                status={task.status}
+                                task={task}
                             />
                         ))
                     }</div>

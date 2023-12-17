@@ -7,7 +7,10 @@ import {
   AiOutlineCalendar,
 } from "react-icons/ai";
 
-function Task(task) {
+function Task({ task }) {
+
+
+
   return (
     <div className="flex flex-col justify-between p-4 text-black bg-white rounded-md shadow-lg md:flex-row md:items-center">
       <div className="space-y-2 md:space-x-2 md:space-y-0">

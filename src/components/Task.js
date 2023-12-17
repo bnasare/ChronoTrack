@@ -16,7 +16,7 @@ import { getFirestore, updateDoc, onSnapshot, doc } from "firebase/firestore";
 const db = getFirestore(app)
 function Task({ task }) {
 
-  const [localTask, setlocalTask] = useState(task);
+  const [localTask, setLocalTask] = useState(task);
   const [isEditing, setIsEditing] = useState(false);
   const [newTaskDescription, setNewTaskDescription] = useState(localTask.task);
 
@@ -29,7 +29,31 @@ function Task({ task }) {
     setNewTaskDescription(localTask.task);
   }
 
-  const handleUpdate = () => { }
+  const handlePause = async () => {
+    try {
+      const elapsed = localTask.startTime
+        ? Date.now() - localTask.startTime
+        : 0;
+      const newTotalTime = (localTask.totalTime || 0) + elapsed;
+      await updateDoc(doc(db, "tasks", localTask.id), {
+        status: "paused",
+        endTime: Date.now(),
+        totalTime: newTotalTime,
+      });
+      const taskDoc = doc(db, "tasks", localTask.id);
+      onSnapshot(taskDoc, (docSnap) => {
+        if (docSnap.exists()) {
+          setLocalTask({
+            ...docSnap.data(),
+            date: localTask.date,
+            id: localTask.id,
+          });
+        }
+      });
+    } catch (error) {
+      console.log("Error pausing task:", error);
+    }
+  };
 
   const handleRenderTaskDescription = () => { }
 
@@ -42,7 +66,7 @@ function Task({ task }) {
       const taskDoc = doc(db, "tasks", localTask.id)
       onSnapshot(taskDoc, (doc) => {
         if (doc.exists()) {
-          setlocalTask({ ...doc.data(), id: localTask.id, date: localTask.date })
+          setLocalTask({ ...doc.data(), id: localTask.id, date: localTask.date })
         }
       })
     } catch (error) {
@@ -50,7 +74,6 @@ function Task({ task }) {
     }
   }
 
-  function handlePause() { }
 
   function handleDelete() { }
 

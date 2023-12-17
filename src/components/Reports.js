@@ -104,11 +104,11 @@ function Report() {
                 <div className="max-w-md p-4 mx-auto my-6 text-black bg-white rounded-md">
                     <h2 className="mb-2 text-lg font-semibold">User Profile</h2>
                     <div className="flex items-center">
-                        <img className="w-16 h-16 rounded-full" src="" alt="profile" />
+                        <img className="w-16 h-16 rounded-full" src={auth.currentUser.photoURL || "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"} alt="profile" />
                         <div className="ml-4">
-                            <h3 className="text-lg font-semibold">Username</h3>
-                            <p className="text-gray-600">Email</p>
-                            <p className="text-gray-600">Last Login</p>
+                            <h3 className="text-lg font-semibold">{auth.currentUser.displayName || "Username"}</h3>
+                            <p className="text-gray-600">{auth.currentUser.email || "Email"}</p>
+                            <p className="text-gray-600">Last Login: {auth.currentUser.metadata.lastSignInTime || "Last Sign In Time"}</p>
                         </div>
                     </div>
                 </div>

@@ -5,11 +5,72 @@ import {
   AiOutlineEdit,
   AiOutlineDelete,
   AiOutlineCalendar,
+  AiOutlinePlayCircle,
+  AiOutlinePauseCircle,
+  AiOutlineLogout,
+  AiOutlineReload
 } from "react-icons/ai";
+import app from "../firebase/config";
+import { getFirestore, updateDoc, onSnapshot, doc } from "firebase/firestore";
 
+const db = getFirestore(app)
 function Task({ task }) {
 
+  const [localTask, setlocalTask] = useState(task);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newTaskDescription, setNewTaskDescription] = useState(localTask.task);
 
+  function handleEdit() {
+    setIsEditing(true);
+  }
+
+  function handleCancelEdit() {
+    setIsEditing(false);
+    setNewTaskDescription(localTask.task);
+  }
+
+  const handleUpdate = () => { }
+
+  const handleRenderTaskDescription = () => { }
+
+  async function handleStart() {
+    try {
+      await updateDoc(doc(db, "tasks", localTask.id), {
+        status: "in_progress",
+        startTime: Date.now()
+      })
+      const taskDoc = doc(db, "tasks", localTask.id)
+      onSnapshot(taskDoc, (doc) => {
+        if (doc.exists()) {
+          setlocalTask({ ...doc.data(), id: localTask.id, date: localTask.date })
+        }
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function handlePause() { }
+
+  function handleDelete() { }
+
+  const handleRenderButtons = () => {
+    switch (localTask.status) {
+      case "unstarted":
+        return (
+          <AiOutlinePlayCircle onClick={handleStart} className="text-2xl text-purple-400" />
+        )
+      case "in_progress":
+        return (
+          <AiOutlinePauseCircle onClick={handlePause} className="text-2xl text-green-400" />
+        )
+      default:
+      case "unstarted":
+        return (
+          <AiOutlineReload onClick={handleStart} className="text-2xl text-green-400" />
+        )
+    }
+  }
 
   return (
     <div className="flex flex-col justify-between p-4 text-black bg-white rounded-md shadow-lg md:flex-row md:items-center">
@@ -22,10 +83,10 @@ function Task({ task }) {
       </div>
       <div className="flex items-center justify-center space-x-2">
         <BsCircleFill />
-        <p>{task.status}</p>
+        <p>{localTask.status}</p>
       </div>
       <div className="flex items-center justify-center space-x-2 md:justify-end">
-        {/* Render buttons */}
+        {handleRenderButtons()}
         <AiOutlineEdit className="text-2xl text-purple-400" />
         <AiOutlineDelete className="text-2xl text-red-500" />
       </div>

@@ -12,6 +12,7 @@ import {
   AiOutlineReload
 } from "react-icons/ai";
 import app from "../firebase/config";
+import { FaCheck, FaTimes } from 'react-icons/fa'
 import { getFirestore, updateDoc, onSnapshot, doc } from "firebase/firestore";
 
 const db = getFirestore(app)
@@ -28,6 +29,21 @@ function Task({ task }) {
   function handleCancelEdit() {
     setIsEditing(false);
     setNewTaskDescription(localTask.task);
+  }
+
+  const handleUpdate = async () => {
+    try {
+      await updateDoc(doc(db, "tasks", localTask.id), {
+        task: newTaskDescription
+      });
+      setLocalTask({
+        ...localTask,
+        task: newTaskDescription
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.log("Error updating task:", error);
+    }
   }
 
   const handlePause = async () => {
@@ -56,7 +72,25 @@ function Task({ task }) {
     }
   };
 
-  const handleRenderTaskDescription = () => { }
+  const handleRenderTaskDescription = () => {
+    if (isEditing) {
+      return (
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            className="px-2 py-1 border border-purple-300 rounded"
+            value={newTaskDescription}
+            onChange={(e) => setNewTaskDescription(e.target.value)}
+          />
+          <FaCheck onClick={handleUpdate} className="text-green-400 cursor-pointer" />
+          <FaTimes onClick={handleCancelEdit} className="text-red-400 cursor-pointer" />
+        </div>
+      )
+    }
+
+    return <p className="text-gray-600">{task.task}</p>
+
+  }
 
   async function handleStart() {
     try {
@@ -100,10 +134,10 @@ function Task({ task }) {
     <div className="flex flex-col justify-between p-4 text-black bg-white rounded-md shadow-lg md:flex-row md:items-center">
       <div className="space-y-2 md:space-x-2 md:space-y-0">
         {/* render buttons */}
+        {handleRenderTaskDescription()}
         <div className="flex items-center space-x-2">
           <AiOutlineCalendar className="text-gray-600" />
           <p>{format(new Date(localTask.date), "do MMM yyyy")}</p>
-          <p className="text-gray-600">{task.task}</p>
         </div>
       </div>
       <div className="flex items-center justify-center space-x-2">
@@ -118,7 +152,7 @@ function Task({ task }) {
       </div>
       <div className="flex items-center justify-center space-x-2 md:justify-end">
         {handleRenderButtons()}
-        <AiOutlineEdit className="text-2xl text-purple-400" />
+        <AiOutlineEdit onClick={handleEdit} className="text-2xl text-purple-400" />
         <AiOutlineDelete className="text-2xl text-red-500" />
       </div>
     </div>

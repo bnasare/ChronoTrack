@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { AiOutlineLogout } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
-import { getFirestore, query, getDocs, collection, where, onSnapshot } from "firebase/firestore";
+import { getFirestore, query, collection, where, onSnapshot } from "firebase/firestore";
+import { startOfMonth, endOfMonth, startOfWeek, endOfDay, isWithinInterval, format, addMilliseconds } from "date-fns";
 import { Link } from "react-router-dom";
 import Task from "./Task";
 import app from "../firebase/config";
@@ -19,6 +20,8 @@ function Report() {
     const [thisMonthTotal, setThisMonthTotal] = useState(0);
 
     useEffect(() => {
+        let unsubscribe = null; // Initialize variable to hold the unsubscribe function
+
         const fetchData = async () => {
             try {
                 setLoading(true);
@@ -26,14 +29,43 @@ function Report() {
                 if (auth.currentUser) {
                     const tasksRef = collection(db, "tasks");
                     const q = query(tasksRef, where("userId", "==", auth.currentUser.uid));
-                    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-                        const tasks = querySnapshot.docs.map((doc) => ({
-                            ...doc.data(),
-                            id: doc.id,
-                            date: new Date(doc.data().startTime).toISOString()
-                        }));
-                        setTasks(tasks);
-                        setLoading(false);
+                    // Directly assign the return value of onSnapshot to unsubscribe
+                    unsubscribe = onSnapshot(q, (querySnapshot) => {
+                        if (querySnapshot.docs.length) {
+                            let weekTotal = 0;
+                            let monthTotal = 0;
+                            let total = 0;
+                            const now = new Date();
+                            const weekStart = startOfWeek(now);
+                            const weekEnd = endOfDay(now);
+                            const monthStart = startOfMonth(now);
+                            const monthEnd = endOfMonth(now);
+
+                            querySnapshot.docs.forEach((doc) => {
+                                const data = doc.data();
+                                const taskDate = new Date(data.startTime)
+                                const taskTime = data.totalTime || 0
+                                if (isWithinInterval(taskDate, { start: weekStart, end: weekEnd })) {
+                                    weekTotal += taskTime
+                                }
+                                if (isWithinInterval(taskDate, { start: monthStart, end: monthEnd })) {
+                                    monthTotal += taskTime
+                                }
+                                total += taskTime
+                            })
+
+                            setThisWeekTotal(weekTotal);
+                            setThisMonthTotal(monthTotal);
+                            setTotalTime(total);
+
+                            const tasks = querySnapshot.docs.map((doc) => ({
+                                ...doc.data(),
+                                id: doc.id,
+                                date: new Date(doc.data().startTime).toISOString()
+                            }));
+                            setTasks(tasks);
+                            setLoading(false);
+                        }
                     });
                 } else {
                     setError("User not logged in");
@@ -42,20 +74,23 @@ function Report() {
             } catch (error) {
                 setError(error.message);
                 setLoading(false);
-                return;
             }
         };
 
         fetchData();
 
-        // const unsubscribe = fetchData();
+        // Cleanup function
+        return () => {
+            if (unsubscribe) {
+                unsubscribe(); // Call the unsubscribe function if it has been set
+            }
+        };
+    }, []); // Empty dependency array means this effect will only run once (like componentDidMount)
 
-        // return () => {
-        //   if (unsubscribe) {
-        //     unsubscribe();
-        //   }
-        // };
-    }, []);
+    function formatTIme(timeInMillis) {
+        const date = addMilliseconds(new Date(0), timeInMillis);
+        return format(date, "HH:mm:ss");
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-green-400 to-blue-500">
@@ -81,15 +116,15 @@ function Report() {
                 <div className="grid grid-cols-1 gap-4 mb-8 text-center sm:grid-cols-2 md:grid-cols-3">
                     <div className="p-4 text-white rounded-md shadow-lg bg-gradient-to-r from-green-400 to-blue-500">
                         <h2 className="text-lg font-semibold">This Week</h2>
-                        <p className="text-2xl font-bold">20</p>
+                        <p className="text-2xl font-bold">{formatTIme(thisWeekTotal)}</p>
                     </div>
                     <div className="p-4 text-white rounded-md shadow-lg bg-gradient-to-r from-purple-400 to-pink-500">
                         <h2 className="text-lg font-semibold">This Month</h2>
-                        <p className="text-2xl font-bold">10</p>
+                        <p className="text-2xl font-bold">{formatTIme(thisMonthTotal)}</p>
                     </div>
                     <div className="p-4 text-white rounded-md shadow-lg bg-gradient-to-r from-red-400 to-yellow-500">
                         <h2 className="text-lg font-semibold">Total</h2>
-                        <p className="text-2xl font-bold">30</p>
+                        <p className="text-2xl font-bold">{formatTIme(totalTime)}</p>
                     </div>
                 </div>
 

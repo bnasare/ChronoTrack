@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { format } from 'date-fns'
 
 import { BsCircleFill } from "react-icons/bs";
 import {
@@ -101,11 +102,18 @@ function Task({ task }) {
         {/* render buttons */}
         <div className="flex items-center space-x-2">
           <AiOutlineCalendar className="text-gray-600" />
+          <p>{format(new Date(localTask.date), "do MMM yyyy")}</p>
           <p className="text-gray-600">{task.task}</p>
         </div>
       </div>
       <div className="flex items-center justify-center space-x-2">
-        <BsCircleFill />
+        <BsCircleFill color={
+          localTask.status === "paused"
+            ? "red" :
+            localTask.status === "in_progress"
+              ? "green"
+              : "yellow"
+        } />
         <p>{localTask.status}</p>
       </div>
       <div className="flex items-center justify-center space-x-2 md:justify-end">

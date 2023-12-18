@@ -8,12 +8,11 @@ import {
   AiOutlineCalendar,
   AiOutlinePlayCircle,
   AiOutlinePauseCircle,
-  AiOutlineLogout,
   AiOutlineReload
 } from "react-icons/ai";
 import app from "../firebase/config";
 import { FaCheck, FaTimes } from 'react-icons/fa'
-import { getFirestore, updateDoc, onSnapshot, doc } from "firebase/firestore";
+import { getFirestore, updateDoc, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 
 const db = getFirestore(app)
 function Task({ task }) {
@@ -110,22 +109,29 @@ function Task({ task }) {
   }
 
 
-  function handleDelete() { }
+  const handleDelete = async () => {
+    try {
+      await deleteDoc(doc(db, "tasks", localTask.id));
+      alert("Task deleted successfully");
+    } catch (error) {
+      alert("Task deleted failed");
+    }
+  };
 
   const handleRenderButtons = () => {
     switch (localTask.status) {
       case "unstarted":
         return (
-          <AiOutlinePlayCircle onClick={handleStart} className="text-2xl text-purple-400" />
+          <AiOutlinePlayCircle onClick={handleStart} className="text-2xl text-purple-400 cursor-pointer" />
         )
       case "in_progress":
         return (
-          <AiOutlinePauseCircle onClick={handlePause} className="text-2xl text-green-400" />
+          <AiOutlinePauseCircle onClick={handlePause} className="text-2xl text-green-400 cursor-pointer" />
         )
       default:
       case "unstarted":
         return (
-          <AiOutlineReload onClick={handleStart} className="text-2xl text-green-400" />
+          <AiOutlineReload onClick={handleStart} className="text-2xl text-green-400 cursor-pointer" />
         )
     }
   }
@@ -136,7 +142,7 @@ function Task({ task }) {
         {/* render buttons */}
         {handleRenderTaskDescription()}
         <div className="flex items-center space-x-2">
-          <AiOutlineCalendar className="text-gray-600" />
+          <AiOutlineCalendar className="text-gray-600 cursor-pointer" />
           <p>{format(new Date(localTask.date), "do MMM yyyy")}</p>
         </div>
       </div>
@@ -152,8 +158,8 @@ function Task({ task }) {
       </div>
       <div className="flex items-center justify-center space-x-2 md:justify-end">
         {handleRenderButtons()}
-        <AiOutlineEdit onClick={handleEdit} className="text-2xl text-purple-400" />
-        <AiOutlineDelete className="text-2xl text-red-500" />
+        <AiOutlineEdit onClick={handleEdit} className="text-2xl text-purple-400 cursor-pointer" />
+        <AiOutlineDelete onClick={handleDelete} className="text-2xl text-red-500 cursor-pointer" />
       </div>
     </div>
   );

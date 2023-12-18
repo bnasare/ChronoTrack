@@ -6,33 +6,33 @@ const Homepage = () => {
   return (
     <div>
       <section className="pb-12">
-        <div className="relative container px-4 mx-auto">
-          <div className="flex flex-wrap -mx-4 items-center mb-16">
-            <div className="w-full lg:w-1/2 px-4 mb-24 lg:mb-0">
-              <div className="max-w-md md:max-w-lg mx-auto xl:mx-0">
-                <div className="text-sm mb-2 mt-5 font-semibold uppercase">
+        <div className="container relative px-4 mx-auto">
+          <div className="flex flex-wrap items-center mb-16 -mx-4">
+            <div className="w-full px-4 mb-24 lg:w-1/2 lg:mb-0">
+              <div className="max-w-md mx-auto md:max-w-lg xl:mx-0">
+                <div className="mt-5 mb-2 text-sm font-semibold uppercase">
                   <span>Task Tracking</span>
                   <span className="text-green-500"> Application</span>
                 </div>
-                <h1 className="font-heading text-4xl md:text-5xl mb-6">
+                <h1 className="mb-6 text-4xl font-heading md:text-5xl">
                   Track Your Time, Boost Your Productivity
                 </h1>
-                <p className="text-lg leading-8 mb-10">
+                <p className="mb-10 text-lg leading-8">
                   Effortlessly manage and track your tasks to improve
                   productivity and achieve your goals. Stay organized,
                   prioritize effectively, and maximize your time with our task
                   time tracking application.
                 </p>
-                <div className="sm:flex items-center">
+                <div className="items-center sm:flex">
                   <Link
                     to={"/login"}
-                    className="inline-block w-full sm:w-auto py-4 px-6 mb-4 sm:mb-0 sm:mr-4 text-center font-heading font-medium text-base text-white bg-blue-500 hover:bg-green-600 border border-green-500 hover:border-green-600 rounded-sm transition duration-200"
+                    className="inline-block w-full px-6 py-4 mb-4 text-base font-medium text-center text-white transition duration-200 bg-blue-500 border border-green-500 rounded-sm sm:w-auto sm:mb-0 sm:mr-4 font-heading hover:bg-green-600 hover:border-green-600"
                   >
                     Start taking control of your time today!
                   </Link>
                   <Link
                     to={"/register"}
-                    className="inline-block w-full sm:w-auto py-4 px-6 mb-4 sm:mb-0 sm:mr-4 text-center font-heading font-medium text-base text-white bg-red-500 hover:bg-green-600 border border-green-500 hover:border-green-600 rounded-sm transition duration-200"
+                    className="inline-block w-full px-6 py-4 mb-4 text-base font-medium text-center text-white transition duration-200 bg-red-500 border border-green-500 rounded-sm sm:w-auto sm:mb-0 sm:mr-4 font-heading hover:bg-green-600 hover:border-green-600"
                     href="#"
                   >
                     Enroll Now
@@ -40,11 +40,11 @@ const Homepage = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full lg:w-1/2 px-4">
+            <div className="w-full px-4 lg:w-1/2">
               <img className="block mx-auto xl:mx-0" src={task} alt="task" />
             </div>
           </div>
-          <a className="inline-block text-gray-900" href="#">
+          <a className="inline-block text-gray-900" >
             <svg
               width={26}
               height={30}
@@ -62,24 +62,24 @@ const Homepage = () => {
             </svg>
           </a>
         </div>
-        <div className="hidden navbar-menu fixed top-0 left-0 bottom-0 w-5/6 max-w-sm z-50">
-          <div className="navbar-backdrop fixed inset-0 backdrop-blur-xl backdrop-filter bg-gray-900 bg-opacity-80" />
+        <div className="fixed top-0 bottom-0 left-0 z-50 hidden w-5/6 max-w-sm navbar-menu">
+          <div className="fixed inset-0 bg-gray-900 navbar-backdrop backdrop-blur-xl backdrop-filter bg-opacity-80" />
         </div>
       </section>
       {/* How it works */}
-      <section className="relative pt-16 lg:pb-16 bg-gray-50 overflow-hidden">
+      <section className="relative pt-16 overflow-hidden lg:pb-16 bg-gray-50">
         <img
-          className="hidden lg:block absolute top-0 right-0 h-full w-1/2 object-cover"
+          className="absolute top-0 right-0 hidden object-cover w-1/2 h-full lg:block"
           src={work}
           alt="work"
         />
         <div className="container px-4 mx-auto">
           <div className="w-full lg:w-1/2">
             <div className="max-w-md xl:max-w-lg">
-              <h2 className="font-heading text-3xl sm:text-4xl mb-6">
+              <h2 className="mb-6 text-3xl font-heading sm:text-4xl">
                 Features of Time Tracking Application
               </h2>
-              <p className="max-w-md text-lg leading-8 mb-12">
+              <p className="max-w-md mb-12 text-lg leading-8">
                 Effortlessly track and manage tasks based on different time
                 periods such as weeks, months, and overall total. The
                 application allows users to view and analyze their task data
@@ -108,7 +108,7 @@ const Homepage = () => {
                     />
                   </svg>
                 </div>
-                <span className="font-heading font-medium">Authentication</span>
+                <span className="font-medium font-heading">Authentication</span>
               </div>
               <div className="flex items-center mb-4">
                 <div className="flex items-center justify-center w-12 h-12 p-3 mr-6 bg-white rounded">
@@ -154,7 +154,7 @@ const Homepage = () => {
                     />
                   </svg>
                 </div>
-                <span className="font-heading font-medium">
+                <span className="font-medium font-heading">
                   Protected Routes
                 </span>
               </div>
@@ -189,7 +189,7 @@ const Homepage = () => {
                     />
                   </svg>
                 </div>
-                <span className="font-heading font-medium">
+                <span className="font-medium font-heading">
                   Track Tasks by Weeks, Months, and Total
                 </span>
               </div>
@@ -197,7 +197,7 @@ const Homepage = () => {
           </div>
         </div>
         {/* <img
-          className="block w-full lg:hidden mt-16 object-cover"
+          className="block object-cover w-full mt-16 lg:hidden"
           src="https://shuffle.dev/acros-assets/images/features/woman-man-smilling.jpg"
           alt
         /> */}

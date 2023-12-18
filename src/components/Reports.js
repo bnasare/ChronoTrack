@@ -29,7 +29,6 @@ function Report() {
                 if (auth.currentUser) {
                     const tasksRef = collection(db, "tasks");
                     const q = query(tasksRef, where("userId", "==", auth.currentUser.uid));
-                    // Directly assign the return value of onSnapshot to unsubscribe
                     unsubscribe = onSnapshot(q, (querySnapshot) => {
                         if (querySnapshot.docs.length) {
                             let weekTotal = 0;
@@ -79,14 +78,12 @@ function Report() {
 
         fetchData();
 
-        // Cleanup function
         return () => {
             if (unsubscribe) {
-                unsubscribe(); // Call the unsubscribe function if it has been set
+                unsubscribe();
             }
         };
-    }, []); // Empty dependency array means this effect will only run once (like componentDidMount)
-
+    }, []);
     const exportTasks = () => {
         const exportData = tasks.map((task) => {
             return {

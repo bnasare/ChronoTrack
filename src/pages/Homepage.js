@@ -28,7 +28,7 @@ const Homepage = () => {
                     Start managing your time!
                   </Link>
                   <Link
-                    to={"/register"}
+                    to={"/login"}
                     className="inline-block w-full px-6 py-4 mb-4 text-base font-medium text-center text-white transition duration-200 bg-red-500 border border-green-500 rounded-sm sm:w-auto sm:mb-0 sm:mr-4 font-heading hover:bg-green-600 hover:border-green-600"
                     href="#"
                   >

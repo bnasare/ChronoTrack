@@ -87,6 +87,28 @@ function Report() {
         };
     }, []); // Empty dependency array means this effect will only run once (like componentDidMount)
 
+    const exportTasks = () => {
+        //Generate export data
+        const exportData = tasks.map((task) => {
+            return {
+                name: task.task,
+                date: format(new Date(task.date), "do MMM yyy"),
+                status: task.status,
+            };
+        });
+        //Convert the data to csv format
+        const csvContent =
+            "data:text/csv;charset=utf-8," +
+            exportData.map((row) => Object.values(row).join(",")).join("\n");
+
+        //Download
+        const link = document.createElement("a");
+        link.href = encodeURI(csvContent);
+        link.target = "_blank";
+        link.download = "tasks.csv";
+        link.click();
+    };
+
     function formatTIme(timeInMillis) {
         const date = addMilliseconds(new Date(0), timeInMillis);
         return format(date, "HH:mm:ss");
@@ -136,7 +158,7 @@ function Report() {
                         >
                             Add New Task
                         </Link>
-                        <button className="w-full p-2 text-white rounded sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500">
+                        <button onClick={exportTasks} className="w-full p-2 text-white rounded sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500">
                             Export
                         </button>
                     </div>

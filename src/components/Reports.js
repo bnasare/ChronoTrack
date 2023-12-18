@@ -88,7 +88,6 @@ function Report() {
     }, []); // Empty dependency array means this effect will only run once (like componentDidMount)
 
     const exportTasks = () => {
-        //Generate export data
         const exportData = tasks.map((task) => {
             return {
                 name: task.task,
@@ -96,12 +95,11 @@ function Report() {
                 status: task.status,
             };
         });
-        //Convert the data to csv format
+
         const csvContent =
             "data:text/csv;charset=utf-8," +
             exportData.map((row) => Object.values(row).join(",")).join("\n");
 
-        //Download
         const link = document.createElement("a");
         link.href = encodeURI(csvContent);
         link.target = "_blank";
@@ -114,13 +112,17 @@ function Report() {
         return format(date, "HH:mm:ss");
     }
 
+    function handleLogout() {
+        auth.signOut();
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-r from-green-400 to-blue-500">
             <div className="container px-4 py-10 mx-auto">
                 <header className="flex justify-between py-6">
                     <h1 className="text-4xl font-bold text-white">Time Tracker</h1>
                     <button className="text-white" title="Logout">
-                        <AiOutlineLogout className="text-2xl" />
+                        <AiOutlineLogout onClick={handleLogout} className="text-2xl" />
                     </button>
                 </header>
                 <div className="max-w-md p-4 mx-auto my-6 text-black bg-white rounded-md">
